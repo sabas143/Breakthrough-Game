@@ -1,7 +1,7 @@
 import pygame
 from game.board import Board
 from game.rules import Rules
-from ui.utils import draw_board, drawn_pawns, get_pawn
+from ui.utils import draw_board, drawn_pawns, draw_highlight, draw_possible_moves, get_pawn
 
 # Inicialização
 pygame.init()
@@ -23,17 +23,17 @@ black_pawn_img = get_pawn(pieces, 1, 5, tile_size)
 # Ajuste de borda e tamanho dos peões
 border = screen_size // 10
 board_area = screen_size - 2 * border
-piece_size = board_area // 8
+pawn_size = board_area // 8
 
-white_pawn_img = pygame.transform.scale(white_pawn_img, (piece_size, piece_size))
-black_pawn_img = pygame.transform.scale(black_pawn_img, (piece_size, piece_size))
+white_pawn_img = pygame.transform.scale(white_pawn_img, (pawn_size, pawn_size))
+black_pawn_img = pygame.transform.scale(black_pawn_img, (pawn_size, pawn_size))
+
+# Cria o tabuleiro
+board = Board()
 
 # Variáveis de estado
 current_player = 1
 selected = None
-
-# Cria o tabuleiro
-board = Board()
 
 # Loop principal
 running = True
@@ -46,8 +46,8 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = event.pos
 
-            x = (pos[1] - border) // piece_size
-            y = (pos[0] - border) // piece_size
+            x = (pos[1] - border) // pawn_size
+            y = (pos[0] - border) // pawn_size
 
             if 0 <= x < Board.SIZE and 0 <= y < Board.SIZE:
 
@@ -77,7 +77,13 @@ while running:
     draw_board(screen, board_img)
 
     # Desenha os peões
-    drawn_pawns(screen, board, white_pawn_img, black_pawn_img, border, piece_size)
+    drawn_pawns(screen, board, white_pawn_img, black_pawn_img, border, pawn_size)
+
+    # Desenha destaque para peão selecionado
+    draw_highlight(screen, selected, border, pawn_size)
+
+    # Desenha os movimentos possíveis
+    draw_possible_moves(screen, board, selected, current_player, border, pawn_size)
 
     if (Rules.check_winner(board) is not None):
         running = False

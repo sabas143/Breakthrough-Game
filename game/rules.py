@@ -25,7 +25,7 @@ class Rules:
             return True
 
         # Diagonal
-        if (abs(y2 - y1) == 1) and (x2 == x1 + direction):
+        if (abs(y2 - y1) == 1) and (x2 == x1 + direction) and (board.grid[x2][y2] != player_color):
             return True
         
         return False
