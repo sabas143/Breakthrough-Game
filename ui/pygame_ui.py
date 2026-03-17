@@ -1,11 +1,12 @@
 import pygame
 from game.board import Board
+from game.game import Game
 from game.rules import Rules
 from ui.utils import draw_board, drawn_pawns, draw_highlight, draw_possible_moves, get_pawn
 
 # Inicialização
 pygame.init()
-screen_size = 600
+screen_size = 800
 screen = pygame.display.set_mode((screen_size, screen_size))
 pygame.display.set_caption("Breakthrough")
 
@@ -31,8 +32,10 @@ black_pawn_img = pygame.transform.scale(black_pawn_img, (pawn_size, pawn_size))
 # Cria o tabuleiro
 board = Board()
 
-# Variáveis de estado
-current_player = 1
+# Cria o jogo
+game = Game(board, Rules())
+
+# Variável de estado
 selected = None
 
 # Loop principal
@@ -42,6 +45,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = event.pos
@@ -51,12 +55,12 @@ while running:
 
             if 0 <= x < Board.SIZE and 0 <= y < Board.SIZE:
 
-                pawn = board.grid[x][y]
+                pawn = game.board.grid[x][y]
 
                 # Seleciona peça
                 if selected is None:
 
-                    if pawn == current_player:
+                    if pawn == game.current_player:
                         selected = (x, y)
 
                 else:
@@ -64,12 +68,7 @@ while running:
                     start = selected
                     end = (x, y)
 
-                    if Rules.valid_move(board, start, end, current_player):
-
-                        board.move_pawn(start, end)
-
-                        # Troca jogador
-                        current_player = -current_player
+                    game.move_pawn(start, end)
 
                     selected = None
 
@@ -83,9 +82,10 @@ while running:
     draw_highlight(screen, selected, border, pawn_size)
 
     # Desenha os movimentos possíveis
-    draw_possible_moves(screen, board, selected, current_player, border, pawn_size)
+    draw_possible_moves(screen, board, selected, game.current_player, border, pawn_size)
 
-    if (Rules.check_winner(board) is not None):
+    
+    if game.game_over:
         running = False
 
     # Atualiza o frame

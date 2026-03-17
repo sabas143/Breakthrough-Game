@@ -10,25 +10,27 @@ class Rules:
         pawn = board.grid[x1][y1]
 
         if pawn == 0 or pawn != player_color:
-            return False 
+            return 0 
 
         if x2 < 0 or x2 >= Board.SIZE:
-            return False
+            return 0
         
         if y2 < 0 or y2 >= Board.SIZE:
-            return False
+            return 0
         
         direction = -1 if pawn == 1 else 1
 
         # Frente
         if (y1 == y2) and (x2 == x1 + direction) and (board.grid[x2][y2] == 0):
-            return True
+            return 1
 
         # Diagonal
         if (abs(y2 - y1) == 1) and (x2 == x1 + direction) and (board.grid[x2][y2] != player_color):
-            return True
+            if(board.grid[x2][y2] == -player_color):
+                return 2
+            return 1
         
-        return False
+        return 0
 
     @staticmethod
     def check_winner(board):
