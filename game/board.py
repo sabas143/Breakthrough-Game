@@ -48,6 +48,11 @@ class Board:
         elif self.grid[x][y] == self.WHITE:
             self.white_pawns.remove(8*x + y)
 
+
+    """Função para mover um peão de uma posição para outra
+    Parâmetros:
+    - start: Uma tupla (x1, y1) representando a posição inicial do peão
+    - end: Uma tupla (x2, y2) representando a posição final do peão"""
     def move_pawn(self, start, end):
         x1, y1 = start
         x2, y2 = end
@@ -55,4 +60,12 @@ class Board:
         pawn = self.grid[x1][y1]
         self.remove_pawn(x1, y1)
         self.place_pawn(x2, y2, pawn)
+
+
+    def copy(self):
+        new_board = Board()
+        new_board.black_pawns = self.black_pawns.copy()
+        new_board.white_pawns = self.white_pawns.copy()
+        new_board.grid = [row.copy() for row in self.grid]
+        return new_board
         

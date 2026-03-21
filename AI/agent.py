@@ -1,18 +1,55 @@
-from game.board import Board
 from game.rules import Rules
 from ui.utils import pawn_possible_moves
+from math import modf
+from AI.strategies import Strategy
 
 class Agent:
-    def __init__(self, name):
+    def __init__(self, name, player, strategy: Strategy):
         self.name = name
+        self.player = player
+        self.strategy = strategy
 
+    def minimax(self, board, current_player, depth, alpha=float('-inf'), beta=float('inf')):
+        if(depth == 0 or Rules.check_winner(board) is not None):
+            return self.evaluate(board, self.player), None
 
-    # devolve uma arvore com nós internos representando movimentos e folhas são tabuleiros resultantes desses movimentos
-    def expand(self, board, player, depth):
-        expansion_tree = {}
-        pass #terminar implementação
-        
-    
+        if(current_player == self.player):
+            max_eval = float('-inf')
+            best_move = None
+
+            for move in self.possible_moves(board, current_player):
+                new_board = board.copy()
+                new_board.move_pawn(move[0], move[1])
+                eval, _ = self.minimax(new_board, -current_player, depth - 1, alpha, beta)
+
+                if eval > max_eval:
+                    max_eval = eval
+                    best_move = [move[0], move[1]]
+
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    break
+            
+            return max_eval, best_move
+
+        else:
+            min_eval = float('inf')
+            best_move = None
+
+            for move in self.possible_moves(board, current_player):
+                new_board = board.copy()
+                new_board.move_pawn(move[0], move[1])
+                eval, _ = self.minimax(new_board, -current_player, depth - 1, alpha, beta)
+
+                if eval < min_eval:
+                    min_eval = eval
+                    best_move = [move[0], move[1]]
+
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    break
+            
+            return min_eval, best_move
 
     """
     Função para obter os movimentos possíveis de um jogador específico
@@ -44,9 +81,11 @@ class Agent:
         return moves
 
     def evaluate(self, board, player):
-        raise NotImplementedError("O método evaluate deve ser implementado por subclasses do Agent.")
+        return self.strategy.evaluate(board, player)
     
     def choose_move(self, board, player, depth):
-        raise NotImplementedError("O método choose_move deve ser implementado por subclasses do Agent.")
+        
+        _, move = self.minimax(board, player, True, depth)
+        return move
     
     
