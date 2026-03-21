@@ -3,6 +3,7 @@ from .board import Board
 class Rules:
 
     @staticmethod
+    # retorna 0 se o movimento for inválido, 1 para movimento normal e 2 para captura
     def valid_move(board: Board, start, end, player_color):
         x1, y1 = start
         x2, y2 = end

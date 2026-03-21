@@ -1,8 +1,10 @@
 import pygame
+import time
 from game.board import Board
 from game.game import Game
 from game.rules import Rules
 from ui.utils import draw_board, drawn_pawns, draw_highlight, draw_possible_moves, get_pawn
+from AI.strategies import AdvanceStrategy, MaterialStrategy
 
 # Inicialização
 pygame.init()
@@ -33,7 +35,12 @@ black_pawn_img = pygame.transform.scale(black_pawn_img, (pawn_size, pawn_size))
 board = Board()
 
 # Cria o jogo
-game = Game(board, Rules())
+strategy_white = MaterialStrategy()
+strategy_black = AdvanceStrategy()
+
+ai_players = [(-1, strategy_black), (1, strategy_white)]  # Ambos os jogadores são controlados pela IA
+DEPTH = 3
+game = Game(board, ai_players, DEPTH)
 
 # Variável de estado
 selected = None
@@ -47,7 +54,7 @@ while running:
             running = False
             
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and not game.ai_turn(game.current_player):
             pos = event.pos
 
             x = (pos[1] - border) // pawn_size
@@ -85,6 +92,11 @@ while running:
     draw_possible_moves(screen, board, selected, game.current_player, border, pawn_size)
 
     
+    #IA joga
+    game.play_ai_turn()
+    #time.sleep(0.5)
+
+
     if game.game_over:
         running = False
 
