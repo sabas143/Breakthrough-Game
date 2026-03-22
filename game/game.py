@@ -24,6 +24,9 @@ class Game:
     
 
     def move_pawn(self, start, end):
+        if self.game_over:
+            return
+
         if Rules.valid_move(self.board, start, end, self.current_player):
             self.board.move_pawn(start, end)
 
