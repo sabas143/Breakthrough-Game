@@ -52,7 +52,7 @@ strategy_white = CombinedStrategy([
 ])
 
 
-ai_players = [(-1, strategy_black), (1, strategy_white)]  # Ambos os jogadores são controlados pela IA
+ai_players = [(-1, strategy_black)]  # Ambos os jogadores são controlados pela IA
 DEPTH = 3
 game = Game(board, ai_players, DEPTH)
 
@@ -62,6 +62,9 @@ selected = None
 # Loop principal
 running = True
 while running:
+    #IA joga
+    game.play_ai_turn()
+    #time.sleep(0.1)
 
 
     for event in pygame.event.get():
@@ -107,12 +110,6 @@ while running:
 
     # Desenha os movimentos possíveis
     draw_possible_moves(screen, board, selected, game.current_player, border, pawn_size)
-
-    
-    #IA joga
-    game.play_ai_turn()
-    #time.sleep(0.1)
-
 
 
     # Atualiza o frame
