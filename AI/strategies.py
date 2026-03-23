@@ -6,7 +6,7 @@ class Strategy:
     
 """ Estratégia de material: Avalia a posição com base na contagem de peões, dando um valor positivo para o jogador e negativo para o oponente."""
 class MaterialStrategy(Strategy):
-    def evaluate(self, board, player):
+    def evaluate(self, board, player, depth=0):
         white_count = sum(1 for row in board.grid for p in row if p == 1)
         black_count = sum(1 for row in board.grid for p in row if p == -1)
 
@@ -18,7 +18,7 @@ class MaterialStrategy(Strategy):
 
 """Estratégia de avanço: Avalia a posição dos peões, dando mais valor para peões que estão mais avançados no tabuleiro."""     
 class AdvanceStrategy(Strategy):
-    def evaluate(self, board, player):
+    def evaluate(self, board, player, depth=0):
         white_score = 0
         black_score = 0
 
@@ -42,7 +42,7 @@ class AdvanceStrategy(Strategy):
 
 """Estratégia de estruturas de apoio: Avalia a posição com base na formação dos peões, dando mais valor para peões que estão protegidos por outros peões."""
 class SupportStructureStrategy(Strategy):
-    def evaluate(self, board, player):
+    def evaluate(self, board, player, depth=0):
         white_score = 0
         black_score = 0
 
@@ -69,7 +69,7 @@ class SupportStructureStrategy(Strategy):
 
 """Estratégia de caminhos livres: Avalia a posição com base na quantidade de caminhos livres até a linha de chegada, dando mais valor para peões que têm um caminho mais claro para avançar."""
 class FreePathStrategy(Strategy):
-    def evaluate(self, board, player):
+    def evaluate(self, board, player, depth=0):
         white_score = 0
         black_score = 0
 
@@ -108,7 +108,7 @@ class FreePathStrategy(Strategy):
 
 """"Estratégia de ameaças imediatas: com base na quantidade de peões que irão ganhar inevitavelmente ( não podem mais ser capturados)"""
 class ImmediateThreatsStrategy(Strategy):
-    def evaluate(self, board, player):
+    def evaluate(self, board, player, depth=0):
         white_score = 0
         black_score = 0
 
@@ -144,6 +144,40 @@ class ImmediateThreatsStrategy(Strategy):
         else:
             return black_score - white_score
 
+"""Estratégia defensiva: peões que estão bloqueando o avanço do oponente recebem pontuação maior"""
+class DefensiveStrategy(Strategy):
+    def evaluate(self, board, player, depth=0):
+        white_score = 0
+        black_score = 0
+
+        for pawn in board.white_pawns:
+            x = pawn // 8
+            y = pawn % 8
+
+            blocked_pawns = [(x, y-2), (x+1, y-2), (x-1, y-2)]
+
+            for bx, by in blocked_pawns:
+                if not (0 <= bx < 8 and 0 <= by < 8):
+                    continue
+                if board.grid[bx][by] == -1:
+                    white_score += 1
+
+        for pawn in board.black_pawns:
+            x = pawn // 8
+            y = pawn % 8
+
+            blocked_pawns = [(x, y+2), (x+1, y+2), (x-1, y+2)]
+
+            for bx, by in blocked_pawns:
+                if not (0 <= bx < 8 and 0 <= by < 8):
+                    continue
+                if board.grid[bx][by] == 1:
+                    black_score += 1
+
+        if player == 1:
+            return white_score - black_score
+        else:
+            return black_score - white_score
 
 
 class CombinedStrategy(Strategy):
@@ -151,14 +185,14 @@ class CombinedStrategy(Strategy):
         self.strategies = [s for s, w in strategies_with_weights]
         self.weights = [w for s, w in strategies_with_weights]
 
-    def evaluate(self, board, player):
+    def evaluate(self, board, player, depth=0):
         total_score = 0
         for strategy, weight in zip(self.strategies, self.weights):
-            total_score += weight * strategy.evaluate(board, player)
+            total_score += weight * strategy.evaluate(board, player, depth)
         
         if Rules.check_winner(board) == player:
-            total_score += 1000  
+            total_score += 1000000  - (depth * 1000)  
         elif Rules.check_winner(board) == -player:
-            total_score -= 1000
+            total_score -= 1000000 + (depth * 1000)  
         
         return total_score

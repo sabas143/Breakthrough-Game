@@ -4,7 +4,7 @@ from game.board import Board
 from game.game import Game
 from game.rules import Rules
 from ui.utils import draw_board, drawn_pawns, draw_highlight, draw_possible_moves, get_pawn
-from AI.strategies import AdvanceStrategy, MaterialStrategy, SupportStructureStrategy, FreePathStrategy, ImmediateThreatsStrategy, CombinedStrategy
+from AI.strategies import AdvanceStrategy, MaterialStrategy, SupportStructureStrategy, FreePathStrategy, ImmediateThreatsStrategy, CombinedStrategy, DefensiveStrategy
 
 # Inicialização
 pygame.init()
@@ -40,7 +40,8 @@ strategy_black = CombinedStrategy([
     (MaterialStrategy(), 0.3),
     (SupportStructureStrategy(), 0.2),
     (FreePathStrategy(), 0.1),
-    (ImmediateThreatsStrategy(), 0.5)
+    (ImmediateThreatsStrategy(), 0.5),
+    (DefensiveStrategy(), 0.3)
 ])
 
 strategy_white = CombinedStrategy([
@@ -52,7 +53,7 @@ strategy_white = CombinedStrategy([
 ])
 
 
-ai_players = [(-1, strategy_black)]  # Ambos os jogadores são controlados pela IA
+ai_players = [(-1, strategy_black), (1, strategy_white)]  # Ambos os jogadores são controlados pela IA
 DEPTH = 3
 game = Game(board, ai_players, DEPTH)
 

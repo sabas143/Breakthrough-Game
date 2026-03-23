@@ -11,7 +11,7 @@ class Agent:
 
     def minimax(self, board, current_player, depth, alpha=float('-inf'), beta=float('inf')):
         if(depth == 0 or Rules.check_winner(board) is not None):
-            return self.evaluate(board, self.player), None
+            return self.evaluate(board, self.player, depth), None
 
         if(current_player == self.player):
             max_eval = float('-inf')
@@ -80,8 +80,8 @@ class Agent:
         
         return moves
 
-    def evaluate(self, board, player):
-        return self.strategy.evaluate(board, player)
+    def evaluate(self, board, player, depth=0):
+        return self.strategy.evaluate(board, player, depth)
     
     def choose_move(self, board, player, depth):
         
