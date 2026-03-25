@@ -192,9 +192,9 @@ class CombinedStrategy(Strategy):
             total_score += weight * strategy.evaluate(board, player, depth)
         
         if Rules.check_winner(board) == player:
-            total_score += 1000000  - (depth * 1000)  
+            total_score += 1000000  + (depth * 1000)  
         elif Rules.check_winner(board) == -player:
-            total_score -= 1000000 + (depth * 1000)  
+            total_score -= 1000000 - (depth * 1000)  
         
         return total_score
 
@@ -236,7 +236,7 @@ class DominationStrategy(Strategy):
 
         return dist
 
-    def reachable_board(self, board, player):
+    def reachable_count(self, board, player):
         n = board.SIZE
 
         white = [(p // n, p % n) for p in board.white_pawns]
@@ -257,12 +257,12 @@ class DominationStrategy(Strategy):
             start_pawns = black
             dirs = BLACK_DIRS
 
-        visited = [[False] * n for _ in range(n)]
+        count = [[0] * n for _ in range(n)]
         q = deque()
 
         for x, y in start_pawns:
             if dist_me[x][y] < dist_enemy[x][y]:
-                visited[x][y] = True
+                count[x][y] = 1
                 q.append((x, y))
 
         while q:
@@ -274,31 +274,27 @@ class DominationStrategy(Strategy):
                 if not self.inside(n, nx, ny):
                     continue
 
-                if visited[nx][ny]:
-                    continue
-
                 if dy == 0 and board.grid[nx][ny] != board.EMPTY:
                     continue
 
                 if dist_me[nx][ny] < dist_enemy[nx][ny]:
-                    visited[nx][ny] = True
-                    q.append((nx, ny))
+                    if count[nx][ny] < 10:  # limite pq vai ter mto overcounting sem isso
+                        count[nx][ny] += count[x][y]
+                        q.append((nx, ny))
 
-        return visited
+        return count
 
     def evaluate(self, board, player, depth):
-        white_reachable = self.reachable_board(board, board.WHITE)
-        black_reachable = self.reachable_board(board, board.BLACK)
+        white_reachable = self.reachable_count(board, board.WHITE)
+        black_reachable = self.reachable_count(board, board.BLACK)
         
-        lineWeights = [1, 1, 3, 5, 10, 50, 300, 5000] # pesos para cada distância alcançável
+        lineWeights = [1, 1, 2, 3, 5, 9, 15, 5000] # pesos para cada distância alcançável
         score = 0
         
         for i in range(0, board.SIZE):
             for j in range(0, board.SIZE):
-                if white_reachable[i][j]:
-                    score += lineWeights[board.SIZE - i - 1]
-                if black_reachable[i][j]:
-                    score -= lineWeights[i]
+                score += lineWeights[board.SIZE - i - 1] * white_reachable[i][j]
+                score -= lineWeights[i] * black_reachable[i][j]
 
         return score
     
