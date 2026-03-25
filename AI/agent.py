@@ -26,9 +26,17 @@ class Agent:
             best_move = None
 
             moves = self.possible_moves(board, current_player)
-            moves.sort(key=lambda move: self.evaluate(board, -current_player, depth - 1), reverse=True)
-
+            moveOrder = []
+            
             for move in moves:
+                new_board = board.copy()
+                new_board.move_pawn(move[0], move[1])
+
+                moveOrder.append((move, self.evaluate(new_board, -current_player, depth - 1)))
+            
+            moveOrder.sort(key=lambda x: x[1])
+
+            for move, _ in moveOrder:
                 new_board = board.copy()
                 new_board.move_pawn(move[0], move[1])
                 eval, _ = self.minimax_alpha_beta(new_board, -current_player, depth - 1, alpha, beta)
@@ -48,9 +56,17 @@ class Agent:
             best_move = None
 
             moves = self.possible_moves(board, current_player)
-            moves.sort(key=lambda move: self.evaluate(board, -current_player, depth - 1), reverse=True)
-
+            moveOrder = []
+            
             for move in moves:
+                new_board = board.copy()
+                new_board.move_pawn(move[0], move[1])
+
+                moveOrder.append((move, self.evaluate(new_board, -current_player, depth - 1)))
+            
+            moveOrder.sort(key=lambda x: x[1])
+
+            for move, _ in moveOrder:
                 new_board = board.copy()
                 new_board.move_pawn(move[0], move[1])
                 eval, _ = self.minimax_alpha_beta(new_board, -current_player, depth - 1, alpha, beta)
