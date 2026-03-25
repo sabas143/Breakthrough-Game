@@ -1,5 +1,6 @@
 import pygame
 import time
+import os
 from game.board import Board
 from game.game import Game
 from game.rules import Rules
@@ -7,6 +8,7 @@ from ui.utils import draw_board, drawn_pawns, draw_highlight, draw_possible_move
 from AI.strategies import AdvanceStrategy, MaterialStrategy, SupportStructureStrategy, FreePathStrategy, ImmediateThreatsStrategy, CombinedStrategy, DefensiveStrategy
 
 #reseta o log 
+os.makedirs("logs", exist_ok=True)
 open("logs/log.txt", "w").close()
 
 # Inicialização

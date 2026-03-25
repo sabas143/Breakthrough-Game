@@ -5,6 +5,12 @@ class Board:
 
     SIZE = 8
 
+    def _position_to_int_converter(self, x, y):
+        return x * self.SIZE + y
+
+    def _int_to_position_converter(self, val):
+        return (val // self.SIZE, val % self.SIZE)
+
     # posicão dos peões no formato linha*8 + coluna
     def __init__(self, black_pawns= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],\
                   white_pawns= [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]):
@@ -19,16 +25,11 @@ class Board:
         board = [[self.EMPTY for _ in range(self.SIZE)] for _ in range(self.SIZE)]
 
         for i in range(16):
-            x = self.black_pawns[i] // 8
-            y = self.black_pawns[i] % 8
+            x, y = self._int_to_position_converter(self.black_pawns[i])
             board[x][y] = self.BLACK
 
-            x = self.white_pawns[i] // 8
-            y = self.white_pawns[i] % 8
+            x, y = self._int_to_position_converter(self.white_pawns[i])
             board[x][y] = self.WHITE
-
-        
-        
         return board
     
     def place_pawn(self, x, y, pawn):
