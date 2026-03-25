@@ -9,7 +9,15 @@ class Agent:
         self.player = player
         self.strategy = strategy
 
-    def minimax(self, board, current_player, depth, alpha=float('-inf'), beta=float('inf')):
+        #variaveis para log
+        self.expanded_nodes = 0
+
+        
+
+    """Minimax com poda alpha-beta, para otimização do desempenho"""
+    def minimax_alpha_beta(self, board, current_player, depth, alpha=float('-inf'), beta=float('inf')):
+        self.expanded_nodes += 1
+
         if(depth == 0 or Rules.check_winner(board) is not None):
             return self.evaluate(board, self.player, depth), None
 
@@ -20,7 +28,7 @@ class Agent:
             for move in self.possible_moves(board, current_player):
                 new_board = board.copy()
                 new_board.move_pawn(move[0], move[1])
-                eval, _ = self.minimax(new_board, -current_player, depth - 1, alpha, beta)
+                eval, _ = self.minimax_alpha_beta(new_board, -current_player, depth - 1, alpha, beta)
 
                 if eval > max_eval:
                     max_eval = eval
@@ -39,7 +47,7 @@ class Agent:
             for move in self.possible_moves(board, current_player):
                 new_board = board.copy()
                 new_board.move_pawn(move[0], move[1])
-                eval, _ = self.minimax(new_board, -current_player, depth - 1, alpha, beta)
+                eval, _ = self.minimax_alpha_beta(new_board, -current_player, depth - 1, alpha, beta)
 
                 if eval < min_eval:
                     min_eval = eval
@@ -48,6 +56,44 @@ class Agent:
                 beta = min(beta, eval)
                 if beta <= alpha:
                     break
+            
+            return min_eval, best_move
+        
+
+    """Minimax sem poda alpha-beta, para comparação de desempenho"""
+    def minimax(self, board, current_player, depth):
+        self.expanded_nodes += 1
+
+        if(depth == 0 or Rules.check_winner(board) is not None):
+            return self.evaluate(board, self.player, depth), None
+
+        if(current_player == self.player):
+            max_eval = float('-inf')
+            best_move = None
+
+            for move in self.possible_moves(board, current_player):
+                new_board = board.copy()
+                new_board.move_pawn(move[0], move[1])
+                eval, _ = self.minimax(new_board, -current_player, depth - 1)
+
+                if eval > max_eval:
+                    max_eval = eval
+                    best_move = [move[0], move[1]]
+            
+            return max_eval, best_move
+
+        else:
+            min_eval = float('inf')
+            best_move = None
+
+            for move in self.possible_moves(board, current_player):
+                new_board = board.copy()
+                new_board.move_pawn(move[0], move[1])
+                eval, _ = self.minimax(new_board, -current_player, depth - 1)
+
+                if eval < min_eval:
+                    min_eval = eval
+                    best_move = [move[0], move[1]]
             
             return min_eval, best_move
 
@@ -82,10 +128,24 @@ class Agent:
 
     def evaluate(self, board, player, depth=0):
         return self.strategy.evaluate(board, player, depth)
-    
-    def choose_move(self, board, player, depth):
-        
-        _, move = self.minimax(board, player, True, depth)
+
+
+    """
+    Função para escolher o melhor movimento com base na estratégia do agente
+        Parâmetros:
+        - board: O tabuleiro atual do jogo
+        - player: O jogador para o qual escolher o movimento (1 para branco, -1 para preto)
+        - depth: A profundidade de busca para o algoritmo minimax
+        Retorna:
+        - Uma tupla ((x1, y1), (x2, y2)) representando o movimento escolhido, onde (x1, y1) é a posição inicial do peão e (x2, y2) é a posição final do peão após o movimento
+    """ 
+    def choose_move(self, board, player, depth, alpha_beta=True):
+        self.expanded_nodes = 0
+        _, move = self.minimax_alpha_beta(board, player, depth) if alpha_beta else self.minimax(board, player, depth)
+
+        with open("logs/log.txt", "a") as f:
+            f.write(f"{self.name} escolheu o movimento: {move} com {self.expanded_nodes} nos expandidos.\n")
+
         return move
     
     

@@ -6,6 +6,9 @@ from game.rules import Rules
 from ui.utils import draw_board, drawn_pawns, draw_highlight, draw_possible_moves, get_pawn
 from AI.strategies import AdvanceStrategy, MaterialStrategy, SupportStructureStrategy, FreePathStrategy, ImmediateThreatsStrategy, CombinedStrategy, DefensiveStrategy
 
+#reseta o log 
+open("logs/log.txt", "w").close()
+
 # Inicialização
 pygame.init()
 screen_size = 800
