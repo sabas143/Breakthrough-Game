@@ -18,10 +18,8 @@ class Game:
                 print(f"Player {player[0]} is controlled by {agent.name} with strategy {type(agent.strategy).__name__}")
                 self.ai_players[player[0]] = agent
             
-
-    def change_player(self):
+    def _change_player(self):
         self.current_player = -self.current_player
-    
 
     def move_pawn(self, start, end):
         if self.game_over:
@@ -35,7 +33,7 @@ class Game:
                 self.game_over = True
                 print(f"Player {winner} wins!")
             
-            self.change_player()
+            self._change_player()
 
     def play_ai_turn(self):
         if (self.ai_turn(self.current_player)) and not self.game_over:
