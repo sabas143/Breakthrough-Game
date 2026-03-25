@@ -50,7 +50,7 @@ Retorna:
 def pawn_possible_moves(board, pawn, current_player):
 
     x, y = pawn
-    direction = -1 if current_player == 1 else 1
+    direction = -1 if current_player == Board.WHITE else 1
 
     moves = []
 
