@@ -5,7 +5,7 @@ from game.board import Board
 from game.game import Game
 from game.rules import Rules
 from ui.utils import draw_board, drawn_pawns, draw_highlight, draw_possible_moves, get_pawn
-from AI.strategies import AdvanceStrategy, MaterialStrategy, SupportStructureStrategy, FreePathStrategy, ImmediateThreatsStrategy, CombinedStrategy, DefensiveStrategy
+from AI.strategies import *
 
 #reseta o log 
 os.makedirs("logs", exist_ok=True)
@@ -49,13 +49,7 @@ strategy_black = CombinedStrategy([
     (DefensiveStrategy(), 0.3)
 ])
 
-strategy_white = CombinedStrategy([
-    (AdvanceStrategy(), 0.4),
-    (MaterialStrategy(), 0.3),
-    (SupportStructureStrategy(), 0.2),
-    (FreePathStrategy(), 0.1),
-    (ImmediateThreatsStrategy(), 0.5)
-])
+strategy_white = AlternativeStrategy()
 
 
 ai_players = [(-1, strategy_black), (1, strategy_white)]  # Ambos os jogadores são controlados pela IA

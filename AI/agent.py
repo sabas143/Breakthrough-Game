@@ -12,8 +12,6 @@ class Agent:
         #variaveis para log
         self.expanded_nodes = 0
 
-        
-
     """Minimax com poda alpha-beta, para otimização do desempenho"""
     def minimax_alpha_beta(self, board, current_player, depth, alpha=float('-inf'), beta=float('inf')):
         self.expanded_nodes += 1
@@ -25,7 +23,18 @@ class Agent:
             max_eval = float('-inf')
             best_move = None
 
-            for move in self.possible_moves(board, current_player):
+            moves = self.possible_moves(board, current_player)
+            moveOrder = []
+            
+            for move in moves:
+                new_board = board.copy()
+                new_board.move_pawn(move[0], move[1])
+
+                moveOrder.append((move, self.evaluate(new_board, -current_player, depth - 1)))
+            
+            moveOrder.sort(key=lambda x: x[1], reverse=True)
+
+            for move, _ in moveOrder:
                 new_board = board.copy()
                 new_board.move_pawn(move[0], move[1])
                 eval, _ = self.minimax_alpha_beta(new_board, -current_player, depth - 1, alpha, beta)
@@ -44,7 +53,18 @@ class Agent:
             min_eval = float('inf')
             best_move = None
 
-            for move in self.possible_moves(board, current_player):
+            moves = self.possible_moves(board, current_player)
+            moveOrder = []
+            
+            for move in moves:
+                new_board = board.copy()
+                new_board.move_pawn(move[0], move[1])
+
+                moveOrder.append((move, self.evaluate(new_board, -current_player, depth - 1)))
+            
+            moveOrder.sort(key=lambda x: x[1])
+
+            for move, _ in moveOrder:
                 new_board = board.copy()
                 new_board.move_pawn(move[0], move[1])
                 eval, _ = self.minimax_alpha_beta(new_board, -current_player, depth - 1, alpha, beta)
