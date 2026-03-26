@@ -53,8 +53,8 @@ strategy_white = AlternativeStrategy()
 
 
 ai_players = [(-1, strategy_black), (1, strategy_white)]  # Ambos os jogadores são controlados pela IA
-DEPTH = 3
-game = Game(board, ai_players, DEPTH)
+TIME_LIMIT = 1  # Tempo limite de 2 segundos para cada movimento da IA
+game = Game(board, ai_players, TIME_LIMIT)
 
 # Variável de estado
 selected = None

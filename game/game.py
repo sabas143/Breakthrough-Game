@@ -2,19 +2,19 @@ from game.rules import Rules
 from AI.agent import Agent
 
 class Game:
-    def __init__(self, board, ai_players=None, depth=3):
+    def __init__(self, board, ai_players=None, time_limit=2):
         self.board = board
         self.current_player = 1
         self.game_over = False
         self.ai_players = {}
-        self.depth = depth
+        self.time_limit = time_limit
 
         if ai_players is not None:
             for player in ai_players:
                 if player[0] not in [1, -1]:
                     raise ValueError("Player must be 1 (white) or -1 (black)")
                 
-                agent = Agent(f"AI_preto", player[0], player[1]) if player[0] == -1 else Agent(f"AI_branco", player[0], player[1])
+                agent = Agent(f"AI_preto", player[0], player[1], time_limit=self.time_limit) if player[0] == -1 else Agent(f"AI_branco", player[0], player[1], time_limit=self.time_limit)
                 print(f"Player {player[0]} is controlled by {agent.name} with strategy {type(agent.strategy).__name__}")
                 self.ai_players[player[0]] = agent
             
@@ -38,7 +38,7 @@ class Game:
     def play_ai_turn(self):
         if (self.ai_turn(self.current_player)) and not self.game_over:
             agent = self.ai_players[self.current_player]
-            move = agent.choose_move(self.board, self.current_player, self.depth)
+            move = agent.choose_move(self.board, self.current_player)
 
             if move is not None:
                 self.move_pawn(move[0], move[1])
