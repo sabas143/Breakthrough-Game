@@ -2,18 +2,31 @@ from game.rules import Rules
 from ui.utils import pawn_possible_moves
 from math import modf
 from AI.strategies import Strategy
+from time import time
 
 class Agent:
-    def __init__(self, name, player, strategy: Strategy):
+    def __init__(self, name, player, strategy: Strategy, time_limit=2):
         self.name = name
         self.player = player
         self.strategy = strategy
+        self.time_limit = time_limit
 
         #variaveis para log
         self.expanded_nodes = 0
 
+
+        #variavel para iterative deepening
+        self.start_time = 0
+        self.time_limit_reached = False
+
     """Minimax com poda alpha-beta, para otimização do desempenho"""
     def minimax_alpha_beta(self, board, current_player, depth, alpha=float('-inf'), beta=float('inf')):
+        #iterative deepening time check
+        if time() - self.start_time > self.time_limit:
+            self.time_limit_reached = True
+            return 0, None
+
+        #log de nós expandidos
         self.expanded_nodes += 1
 
         if(depth == 0 or Rules.check_winner(board) is not None):
@@ -38,6 +51,9 @@ class Agent:
                 new_board = board.copy()
                 new_board.move_pawn(move[0], move[1])
                 eval, _ = self.minimax_alpha_beta(new_board, -current_player, depth - 1, alpha, beta)
+
+                if(self.time_limit_reached):
+                    return 0, None
 
                 if eval > max_eval:
                     max_eval = eval
@@ -69,6 +85,9 @@ class Agent:
                 new_board.move_pawn(move[0], move[1])
                 eval, _ = self.minimax_alpha_beta(new_board, -current_player, depth - 1, alpha, beta)
 
+                if(self.time_limit_reached):
+                    return 0, None
+
                 if eval < min_eval:
                     min_eval = eval
                     best_move = [move[0], move[1]]
@@ -82,6 +101,12 @@ class Agent:
 
     """Minimax sem poda alpha-beta, para comparação de desempenho"""
     def minimax(self, board, current_player, depth):
+        #iterative deepening time check
+        if time() - self.start_time > self.time_limit:
+            self.time_limit_reached = True
+            return 0, None
+
+        #log de nós expandidos
         self.expanded_nodes += 1
 
         if(depth == 0 or Rules.check_winner(board) is not None):
@@ -95,6 +120,9 @@ class Agent:
                 new_board = board.copy()
                 new_board.move_pawn(move[0], move[1])
                 eval, _ = self.minimax(new_board, -current_player, depth - 1)
+
+                if(self.time_limit_reached):
+                    return 0, None
 
                 if eval > max_eval:
                     max_eval = eval
@@ -111,11 +139,32 @@ class Agent:
                 new_board.move_pawn(move[0], move[1])
                 eval, _ = self.minimax(new_board, -current_player, depth - 1)
 
+                if(self.time_limit_reached):
+                    return 0, None
+
                 if eval < min_eval:
                     min_eval = eval
                     best_move = [move[0], move[1]]
             
             return min_eval, best_move
+
+    
+    def iterative_deepening(self, board, player, alpha_beta=True):
+        best_move = None
+        self.start_time = time()
+        self.time_limit_reached = False
+
+        depth = 1
+        while not self.time_limit_reached:  # Limite de tempo de 2 segundos
+            _, move = self.minimax_alpha_beta(board, player, depth) if alpha_beta else self.minimax(board, player, depth)
+            depth += 1
+            if not self.time_limit_reached:
+                best_move = move
+                last_depth = depth - 1
+            
+        
+        
+        return best_move, last_depth
 
     """
     Função para obter os movimentos possíveis de um jogador específico
@@ -159,12 +208,12 @@ class Agent:
         Retorna:
         - Uma tupla ((x1, y1), (x2, y2)) representando o movimento escolhido, onde (x1, y1) é a posição inicial do peão e (x2, y2) é a posição final do peão após o movimento
     """ 
-    def choose_move(self, board, player, depth, alpha_beta=True):
-        self.expanded_nodes = 0
-        _, move = self.minimax_alpha_beta(board, player, depth) if alpha_beta else self.minimax(board, player, depth)
+    def choose_move(self, board, player, alpha_beta=True):
+        
+        move, depth = self.iterative_deepening(board, player, alpha_beta)
 
         with open("logs/log.txt", "a") as f:
-            f.write(f"{self.name} escolheu o movimento: {move} com {self.expanded_nodes} nos expandidos.\n")
+            f.write(f"{self.name} escolheu o movimento: {move} com {self.expanded_nodes} nos expandidos e profundidade : {depth}.\n")
 
         return move
     
