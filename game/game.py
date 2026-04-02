@@ -1,8 +1,9 @@
 from game.rules import Rules
 from AI.agent import Agent
+from game.board import Board
 
 class Game:
-    def __init__(self, board, ai_players=None, time_limit=2):
+    def __init__(self, board = Board(), ai_players=None, time_limit=2):
         self.board = board
         self.current_player = 1
         self.game_over = False
@@ -15,7 +16,6 @@ class Game:
                     raise ValueError("Player must be 1 (white) or -1 (black)")
                 
                 agent = Agent(f"AI_preto", player[0], player[1], time_limit=self.time_limit) if player[0] == -1 else Agent(f"AI_branco", player[0], player[1], time_limit=self.time_limit)
-                print(f"Player {player[0]} is controlled by {agent.name} with strategy {type(agent.strategy).__name__}")
                 self.ai_players[player[0]] = agent
             
     def _change_player(self):
@@ -31,7 +31,6 @@ class Game:
             winner = Rules.check_winner(self.board)
             if winner is not None:
                 self.game_over = True
-                print(f"Player {winner} wins!")
             
             self._change_player()
 
@@ -42,9 +41,19 @@ class Game:
 
             if move is not None:
                 self.move_pawn(move[0], move[1])
+            else:
+                self.game_over = True  
 
     def ai_turn(self, player):
         return player in self.ai_players.keys()
+    
+    def play(self):
+        turns = 0
+
+        while not self.game_over and turns < 200:  # Limite de turnos para evitar jogos infinitos
+            self.play_ai_turn()
+            turns += 1
+        return Rules.check_winner(self.board)
                 
 
     

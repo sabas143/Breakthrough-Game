@@ -197,6 +197,9 @@ class CombinedStrategy(Strategy):
             total_score -= 1000000 - (depth * 1000)  
         
         return total_score
+    
+    def __str__(self):
+        return "[" + ", ".join(f"{type(s).__name__}: {w:.2f}" for s, w in zip(self.strategies, self.weights)) + "]"
 
 """
 DominationStrategy avalia um tabuleiro com base

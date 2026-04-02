@@ -49,11 +49,19 @@ strategy_black = CombinedStrategy([
     (DefensiveStrategy(), 0.3)
 ])
 
-strategy_white = AlternativeStrategy()
+strategy_white = CombinedStrategy([
+    (AdvanceStrategy(), 0.4),
+    (MaterialStrategy(), 0.3),
+    (SupportStructureStrategy(), 0.2),
+    (FreePathStrategy(), 0.1),
+    (ImmediateThreatsStrategy(), 0.5),
+    (DefensiveStrategy(), 0.3),
+    (AlternativeStrategy(), 0.1)
+])
 
 
 ai_players = [(-1, strategy_black), (1, strategy_white)]  # Ambos os jogadores são controlados pela IA
-TIME_LIMIT = 1  # Tempo limite de 2 segundos para cada movimento da IA
+TIME_LIMIT = 1  # Tempo limite de 1 segundos para cada movimento da IA
 game = Game(board, ai_players, TIME_LIMIT)
 
 # Variável de estado

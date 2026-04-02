@@ -42,12 +42,13 @@ class Board:
 
 
     def remove_pawn(self, x, y):
-        self.grid[x][y] = self.EMPTY
-
         if self.grid[x][y] == self.BLACK:
             self.black_pawns.remove(8*x + y)
         elif self.grid[x][y] == self.WHITE:
             self.white_pawns.remove(8*x + y)
+            
+        self.grid[x][y] = self.EMPTY
+
 
 
     """Função para mover um peão de uma posição para outra
