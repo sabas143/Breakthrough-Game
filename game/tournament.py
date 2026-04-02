@@ -86,14 +86,22 @@ class Tournament:
             c1,c2 = np.random.choice(competitors, 2, replace=False)
 
             ai_players = [(-1, c1), (1, c2)]  # Ambos os jogadores são controlados pela IA
+            ai_players2 = [(1, c1), (-1, c2)]  # Inverte os papéis para o segundo jogo
+            winner = 0
+
             game = Game(Board(), ai_players, 0.1)
+            winner += game.play()  # Jogo 1
 
-            winner = game.play()
+            game = Game(Board(), ai_players2, 0.1)
+            winner += game.play()  # Jogo 2
 
-            if winner == -1:
-                scores[c1] += 1
-            elif winner == 1:
-                scores[c2] += 1
+            if winner > 0:
+                scores[c1] += 1  # c1 venceu mais jogos
+            elif winner < 0:
+                scores[c2] += 1  # c2 venceu mais jogos
+            # Empate não altera os scores
+
+            
 
         ranked_competitors = sorted(scores.items(), key=lambda x: x[1], reverse=True)
         ranked_competitors = [score[0] for score in ranked_competitors]
@@ -103,5 +111,5 @@ class Tournament:
 
 if __name__ == "__main__":
     tournament = Tournament()
-    best = tournament.genetic_selection(20, 10, 0.1)
+    best = tournament.genetic_selection(30, 30, 0.1)
     print("Best strategy:", best)
