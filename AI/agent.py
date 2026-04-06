@@ -32,7 +32,7 @@ class Agent:
         if(depth == 0 or Rules.check_winner(board) is not None):
             return self.evaluate(board, self.player, depth), None
 
-        if(current_player == self.player):
+        if(current_player == board.WHITE):
             max_eval = float('-inf')
             best_move = None
 
@@ -112,7 +112,7 @@ class Agent:
         if(depth == 0 or Rules.check_winner(board) is not None):
             return self.evaluate(board, self.player, depth), None
 
-        if(current_player == self.player):
+        if(current_player == board.WHITE):
             max_eval = float('-inf')
             best_move = None
 
