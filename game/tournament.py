@@ -111,5 +111,5 @@ class Tournament:
 
 if __name__ == "__main__":
     tournament = Tournament()
-    best = tournament.genetic_selection(30, 30, 0.1)
+    best = tournament.genetic_selection(100, 50, 0.1)
     print("Best strategy:", best)

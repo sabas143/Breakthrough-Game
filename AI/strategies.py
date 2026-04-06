@@ -11,10 +11,7 @@ class MaterialStrategy(Strategy):
         white_count = sum(1 for row in board.grid for p in row if p == 1)
         black_count = sum(1 for row in board.grid for p in row if p == -1)
 
-        if player == 1:
-            return white_count - black_count
-        else:
-            return black_count - white_count
+        return white_count - black_count
 
 
 """Estratégia de avanço: Avalia a posição dos peões, dando mais valor para peões que estão mais avançados no tabuleiro."""     
@@ -34,10 +31,8 @@ class AdvanceStrategy(Strategy):
         white_score = white_score / len(board.white_pawns) if board.white_pawns else 0
         black_score = black_score / len(board.black_pawns) if board.black_pawns else 0
 
-        if player == 1:
-            return white_score - black_score
-        else:
-            return black_score - white_score
+        return white_score - black_score
+        
 
 
 
@@ -62,10 +57,7 @@ class SupportStructureStrategy(Strategy):
         white_score = white_score / len(board.white_pawns) if board.white_pawns else 0
         black_score = black_score / len(board.black_pawns) if board.black_pawns else 0
 
-        if player == 1:
-            return white_score - black_score
-        else:
-            return black_score - white_score      
+        return white_score - black_score  
 
 
 """Estratégia de caminhos livres: Avalia a posição com base na quantidade de caminhos livres até a linha de chegada, dando mais valor para peões que têm um caminho mais claro para avançar."""
@@ -101,10 +93,7 @@ class FreePathStrategy(Strategy):
                 black_score += 1
 
 
-        if player == 1:
-            return white_score - black_score
-        else:
-            return black_score - white_score
+        return white_score - black_score
         
 
 """"Estratégia de ameaças imediatas: com base na quantidade de peões que irão ganhar inevitavelmente ( não podem mais ser capturados)"""
@@ -140,10 +129,7 @@ class ImmediateThreatsStrategy(Strategy):
                     black_score += 1  
 
 
-        if player == 1:
-            return white_score - black_score
-        else:
-            return black_score - white_score
+        return white_score - black_score
 
 """Estratégia defensiva: peões que estão bloqueando o avanço do oponente recebem pontuação maior"""
 class DefensiveStrategy(Strategy):
@@ -175,10 +161,7 @@ class DefensiveStrategy(Strategy):
                 if board.grid[bx][by] == 1:
                     black_score += 1
 
-        if player == 1:
-            return white_score - black_score
-        else:
-            return black_score - white_score
+        return white_score - black_score
 
 
 class CombinedStrategy(Strategy):

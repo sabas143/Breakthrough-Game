@@ -41,22 +41,23 @@ board = Board()
 
 # Cria o jogo
 strategy_black = CombinedStrategy([
-    (AdvanceStrategy(), 0.4),
-    (MaterialStrategy(), 0.3),
-    (SupportStructureStrategy(), 0.2),
-    (FreePathStrategy(), 0.1),
-    (ImmediateThreatsStrategy(), 0.5),
-    (DefensiveStrategy(), 0.3)
-])
+    (AdvanceStrategy(), 0.10),
+    (MaterialStrategy(), 0.17),
+    (SupportStructureStrategy(), 0.16),
+    (FreePathStrategy(), 0.23),
+    (ImmediateThreatsStrategy(), 0.09),
+    (DefensiveStrategy(), 0.17),
+    (AlternativeStrategy(), 0.09)
+])  # Estratégia para o jogador preto
 
 strategy_white = CombinedStrategy([
-    (AdvanceStrategy(), 0.4),
-    (MaterialStrategy(), 0.3),
-    (SupportStructureStrategy(), 0.2),
-    (FreePathStrategy(), 0.1),
-    (ImmediateThreatsStrategy(), 0.5),
-    (DefensiveStrategy(), 0.3),
-    (AlternativeStrategy(), 0.1)
+    (AdvanceStrategy(), 0.10),
+    (MaterialStrategy(), 0.17),
+    (SupportStructureStrategy(), 0.16),
+    (FreePathStrategy(), 0.23),
+    (ImmediateThreatsStrategy(), 0.09),
+    (DefensiveStrategy(), 0.17),
+    (AlternativeStrategy(), 0.09)
 ])
 
 
@@ -123,6 +124,6 @@ while running:
     # Atualiza o frame
     pygame.display.flip()
 
-    
+print(f"Vencedor: {'Preto' if Rules.check_winner(game.board) == -1 else 'Branco'}")    
 
 pygame.quit()
