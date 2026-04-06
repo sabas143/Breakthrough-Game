@@ -47,7 +47,7 @@ strategy_black = CombinedStrategy([
     (FreePathStrategy(), 0.23),
     (ImmediateThreatsStrategy(), 0.09),
     (DefensiveStrategy(), 0.17),
-    (AlternativeStrategy(), 0.09)
+    (DominationStrategy(), 0.009)
 ])  # Estratégia para o jogador preto
 
 strategy_white = CombinedStrategy([
@@ -57,7 +57,7 @@ strategy_white = CombinedStrategy([
     (FreePathStrategy(), 0.23),
     (ImmediateThreatsStrategy(), 0.09),
     (DefensiveStrategy(), 0.17),
-    (AlternativeStrategy(), 0.09)
+    (DominationStrategy(), 0.009)
 ])
 
 
