@@ -174,9 +174,9 @@ class CombinedStrategy(Strategy):
         for strategy, weight in zip(self.strategies, self.weights):
             total_score += weight * strategy.evaluate(board, player, depth)
         
-        if Rules.check_winner(board) == player:
+        if Rules.check_winner(board) == board.WHITE:
             total_score += 1000000  + (depth * 1000)  
-        elif Rules.check_winner(board) == -player:
+        elif Rules.check_winner(board) == board.BLACK:
             total_score -= 1000000 - (depth * 1000)  
         
         return total_score
@@ -283,13 +283,4 @@ class DominationStrategy(Strategy):
                 score -= lineWeights[i] * black_reachable[i][j]
 
         return score
-    
-class AlternativeStrategy(Strategy):
-    def evaluate(self, board, player, depth=0):
-        val = Rules.check_winner(board)
-
-        if val is not None:
-            return (val * 1000000) + (val * depth * 1000)
-        
-        return DominationStrategy().evaluate(board, player, depth)
         
