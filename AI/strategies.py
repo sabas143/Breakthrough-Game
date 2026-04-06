@@ -1,3 +1,4 @@
+from game import board
 from game.rules import Rules
 from collections import deque
 
@@ -170,14 +171,14 @@ class CombinedStrategy(Strategy):
         self.weights = [w for s, w in strategies_with_weights]
 
     def evaluate(self, board, player, depth=0):
+        if Rules.check_winner(board) == board.WHITE:
+            return 1000000  + (depth * 1000)  
+        elif Rules.check_winner(board) == board.BLACK:
+            return -1000000 - (depth * 1000)  
+
         total_score = 0
         for strategy, weight in zip(self.strategies, self.weights):
             total_score += weight * strategy.evaluate(board, player, depth)
-        
-        if Rules.check_winner(board) == board.WHITE:
-            total_score += 1000000  + (depth * 1000)  
-        elif Rules.check_winner(board) == board.BLACK:
-            total_score -= 1000000 - (depth * 1000)  
         
         return total_score
     

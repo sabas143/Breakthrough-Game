@@ -61,7 +61,7 @@ strategy_white = CombinedStrategy([
 ])
 
 
-ai_players = [(-1, strategy_black), (1, strategy_white)]  # Ambos os jogadores são controlados pela IA
+ai_players = [(-1, strategy_black)]  # Ambos os jogadores são controlados pela IA
 TIME_LIMIT = 1  # Tempo limite de 1 segundos para cada movimento da IA
 game = Game(board, ai_players, TIME_LIMIT)
 
